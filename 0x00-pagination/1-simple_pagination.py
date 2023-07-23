@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+Module shows a possible use case of pagination on the contents
+of a csv file
+"""
 import csv
 import math
 from typing import List, Tuple
@@ -37,6 +42,15 @@ class Server:
         return (start, end)
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+        """
+        Retrieves the Contents of an Indexed Page
+        :param page: Page number to retrieve data from
+        :type page: integer
+        :param page_size: Limit to the contents of page to retrieve
+        :type page_size: integer
+        :return: a List of contents within a page
+        :rtype: List of List
+        """
         if type(page) not in [int]:
             raise AssertionError()
         if type(page_size) not in [int]:
@@ -47,5 +61,5 @@ class Server:
             raise AssertionError()
         # populate __dataset with data
         self.dataset()
-        start,end = self.index_range(page,page_size)
+        start, end = self.index_range(page, page_size)
         return self.__dataset[start:end]
