@@ -1,6 +1,11 @@
+#!/usr/bin/env python3
+"""
+Adds HATEOS to Pagination with linking to Prev,next page
+as well as total_pages
+"""
 import csv
 import math
-from typing import List, Tuple
+from typing import List, Tuple, Union, Any, Dict
 
 
 class Server:
@@ -37,6 +42,15 @@ class Server:
         return (start, end)
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
+        """
+                Retrieves the Contents of an Indexed Page
+                :param page: Page number to retrieve data from
+                :type page: integer
+                :param page_size: Limit to the contents of page to retrieve
+                :type page_size: integer
+                :return: a List of contents within a page
+                :rtype: List of List
+        """
         if type(page) not in [int]:
             raise AssertionError()
         if type(page_size) not in [int]:
@@ -47,5 +61,32 @@ class Server:
             raise AssertionError()
         # populate __dataset with data
         self.dataset()
-        start,end = self.index_range(page,page_size)
+        start, end = self.index_range(page, page_size)
         return self.__dataset[start:end]
+
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+        """
+        method that takes the same arguments (and defaults)
+        as get_page and returns a dictionary containing  key-value pairs:
+        :param page:
+        :type page:
+        :param page_size:
+        :type page_size:
+        :return: Dictionary
+        :rtype: dict
+        """
+        page_size: int = page_size
+        page: int = page
+        data: List[List] = self.get_page(page=page, page_size=page_size)
+        total_pages: int = math.ceil(len(self.__dataset) / page_size)
+        prev_page: Union[int, any] = (page - 1) if (page - 1) >= 1 else None
+        next_page: Union[int, any] = (
+            page + 1) if (page + 1) <= total_pages else None
+        return ({
+            'page_size': page_size,
+            'page': page,
+            'data': data,
+            'next_page': next_page,
+            'prev_page': prev_page,
+            'total_pages': total_pages,
+        })
