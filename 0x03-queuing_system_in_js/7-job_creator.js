@@ -46,22 +46,23 @@ const jobs = [
 ];
 var kue = require('kue')
     , push_notification_code = kue.createQueue();
+// Loop through the jobs array
 for (let data of jobs) {
     let job = push_notification_code.create('email', data).priority('high').attempts(5).backoff({ delay: 60 * 1000, type: 'fixed' }).ttl(60 * 1000 * 7).removeOnComplete(true).save(function (err) {
         if (!err) console.log(`Notification job created: ${job.id}`);
     });
     job.on('complete', function (result) {
-        console.log(`Notification job ${job.id} completed`, result);
+        console.log(`Notification job ${result} completed`);
 
     }).on('failed attempt', function (errorMessage, doneAttempts) {
-        console.log(`Notification job ${job.id} failed: ${errorMessage} with doneAttempts ${doneAttempts}`);
+        console.log(`Notification job ${job.id} failed: ${errorMessage}`);
 
     }).on('failed', function (errorMessage) {
         console.log(`Notification job ${job.id} failed: `, errorMessage);
 
     }).on('progress', function (progress, data) {
         // console.log('Notification job JOB_ID PERCENTAGE% complete');
-        console.log('Notification job ' + job.id + ' ' + progress + '% complete', data);
+        console.log('Notification job ' + job.id + ' ' + progress + '% complete');
 
     });
 
